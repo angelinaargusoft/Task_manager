@@ -8,7 +8,7 @@ class AuthService {
 
   static async register({ first_name, last_name, email, password }) {
     // Check if user exists
-    const existing = await UserModel.getUserByEmail(email);
+    const existing = await UserModel.findByEmail(email);
     if (existing) {
       throw new Error("Email already in use");
     }
@@ -24,7 +24,7 @@ class AuthService {
   }
 
   static async login({ email, password }) {
-    const user = await UserModel.getUserByEmail(email);
+    const user = await UserModel.findByEmail(email);
     if (!user) throw new Error("Invalid email or password");
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) throw new Error("Invalid email or password");
