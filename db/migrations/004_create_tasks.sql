@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS Tasks (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_task_project FOREIGN KEY (project_id) REFERENCES Projects(id) ON DELETE CASCADE,
-    CONSTRAINT fk_task_created FOREIGN KEY (created_by) REFERENCES Users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_task_assigned_by FOREIGN KEY (assigned_by) REFERENCES Users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_task_assigned_to FOREIGN KEY (assigned_to) REFERENCES Users(id) ON DELETE CASCADE
+    CONSTRAINT fk_task_created FOREIGN KEY (created_by) REFERENCES Members(id) ON DELETE CASCADE,
+    CONSTRAINT fk_task_assigned_by FOREIGN KEY (assigned_by) REFERENCES Members(id) ON DELETE CASCADE,
+    CONSTRAINT fk_task_assigned_to FOREIGN KEY (assigned_to) REFERENCES Members(id) ON DELETE CASCADE
 );

@@ -1,59 +1,61 @@
-const pool = require("../db/db");
+const db = require("../db/db");
 class TaskModel {
   static async create(task) {
-    const { id, project_id, created_by, assigned_by, assigned_to, title, description, status, due_date } = task;
-    await pool.execute(
-      `INSERT INTO Tasks (id, project_id, created_by, assigned_by, assigned_to, title, description, status, due_date)
+    const [result] = await db.execute(
+      `INSERT INTO Tasks
+        (id, project_id, title, description, status, created_by, assigned_by, assigned_to, due_date)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, project_id, created_by, assigned_by, assigned_to, title, description, status, due_date]
+      [
+        task.id,
+        task.project_id,
+        task.title,
+        task.description,
+        task.status,
+        task.created_by,
+        task.assigned_by,
+        task.assigned_to,
+        task.due_date
+      ]
     );
-    return task;
+    return result;
   }
-  static async findByProject(project_id) {
-    const [rows] = await pool.execute(
-      `SELECT t.*,
-              cu.first_name AS created_by_first, cu.last_name AS created_by_last,
-              abu.first_name AS assigned_by_first, abu.last_name AS assigned_by_last,
-              atu.first_name AS assigned_to_first, atu.last_name AS assigned_to_last
-       FROM Tasks t
-       JOIN Users cu ON t.created_by = cu.id
-       JOIN Users abu ON t.assigned_by = abu.id
-       JOIN Users atu ON t.assigned_to = atu.id
-       WHERE t.project_id = ?`,
-      [project_id]
+  static async findAll() {
+    const [rows] = await db.execute(`SELECT * FROM Tasks`);
+    return rows;
+  }
+  static async findById(id) {
+    const [rows] = await db.execute(`SELECT * FROM Tasks WHERE id = ?`, [id]);
+    return rows[0];
+  }
+  static async update(id, data) {
+    await db.execute(
+      `UPDATE Tasks SET title=?, description=?, status=?, assigned_by=?, assigned_to=?, due_date=? WHERE id=?`,
+      [data.title, data.description, data.status, data.assigned_by, data.assigned_to, data.due_date, id]
+    );
+  }
+  static async delete(id) {
+    await db.execute(`DELETE FROM Tasks WHERE id = ?`, [id]);
+  }
+  static async findByProject(projectId) {
+    const [rows] = await db.execute(`SELECT * FROM Tasks WHERE project_id = ?`, [projectId]);
+    return rows;
+  }
+  static async findByUser(userId) {
+    const [rows] = await db.execute(
+      `SELECT * FROM Tasks WHERE assigned_to = ? OR created_by = ?`,
+      [userId, userId]
     );
     return rows;
   }
-  static async findByAssignedTo(user_id) {
-  const [rows] = await pool.execute(
-    `SELECT t.*,
-            p.name AS project_name,
-            cu.first_name AS created_by_first, cu.last_name AS created_by_last,
-            abu.first_name AS assigned_by_first, abu.last_name AS assigned_by_last
-     FROM Tasks t
-     JOIN Projects p ON t.project_id = p.id
-     JOIN Users cu ON t.created_by = cu.id
-     JOIN Users abu ON t.assigned_by = abu.id
-     WHERE t.assigned_to = ?`,
-    [user_id]
-  );
-  return rows;
-}
-  static async findById(id) {
-    const [rows] = await pool.execute("SELECT * FROM Tasks WHERE id = ?", [id]);
-    return rows[0];
-  }
-  static async update(id, fields) {
-    const updates = Object.keys(fields).map((f) => `${f} = ?`).join(", ");
-    const values = Object.values(fields);
-    values.push(id);
-    await pool.execute(`UPDATE Tasks SET ${updates} WHERE id = ?`, values);
-  }
-  static async remove(id) {
-    await pool.execute("DELETE FROM Tasks WHERE id = ?", [id]);
-  }
 }
 module.exports = TaskModel;
+
+
+
+
+
+
+
 
 
 

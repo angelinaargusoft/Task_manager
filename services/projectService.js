@@ -1,9 +1,21 @@
 const ProjectModel = require("../models/projectModel");
+const MemberModel = require("../models/memberModel")
 const { v4: uuidv4 } = require("uuid");
 class ProjectService {
   static async createProject(data) {
+    //Create the project
     const project = { id: uuidv4(), ...data };
-    return await ProjectModel.create(project);
+    await ProjectModel.create(project);
+
+    //Add the creator as a member with role "Admin"
+    const member = {
+      id: uuidv4(),
+      project_id: project.id,
+      user_id: data.createdBy,   // assuming created_by is passed from controller
+      role: "Admin",
+    };
+    await MemberModel.add(member);
+    return project;
   }
 
   static async getAllProjects() {

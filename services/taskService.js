@@ -4,27 +4,38 @@ class TaskService {
   static async createTask(data) {
     const task = {
       id: uuidv4(),
-      ...data,
-      status: data.status || "Pending",
+      ...data
     };
     return await TaskModel.create(task);
   }
-  static async getProjectTasks(project_id) {
-    return await TaskModel.findByProject(project_id);
+  static async getAllTasks() {
+    return await TaskModel.findAll(); // :white_check_mark: safe now
   }
-  static async getTask(id) {
+  static async getTaskById(id) {
     return await TaskModel.findById(id);
   }
-  static async updateTask(id, fields) {
-    await TaskModel.update(id, fields);
-    return { id, ...fields };
+  static async updateTask(id, data) {
+    await TaskModel.update(id, data);
+    return { id, ...data };
   }
   static async deleteTask(id) {
-    await TaskModel.remove(id);
+    await TaskModel.delete(id);
     return { message: "Task deleted successfully" };
+  }
+  static async getTasksByProject(projectId) {
+    return await TaskModel.findByProject(projectId);
+  }
+  static async getTasksByUser(userId) {
+    return await TaskModel.findByUser(userId);
   }
 }
 module.exports = TaskService;
+
+
+
+
+
+
 
 
 
