@@ -1,5 +1,6 @@
 const ProjectModel = require("../models/projectModel");
-const MemberModel = require("../models/memberModel")
+const MemberModel = require("../models/memberModel");
+const NotificationService = require("./notificationService");
 const { v4: uuidv4 } = require("uuid");
 class ProjectService {
   static async createProject(data) {
@@ -11,10 +12,16 @@ class ProjectService {
     const member = {
       id: uuidv4(),
       project_id: project.id,
-      user_id: data.createdBy,   // assuming created_by is passed from controller
+      user_id: data.createdBy,
       role: "Admin",
     };
     await MemberModel.add(member);
+
+    await NotificationService.createNotification(
+      data.createdBy,
+      "ProjectCreated",
+      `You created a new project: ${data.name}`
+    );
     return project;
   }
 
@@ -28,11 +35,26 @@ class ProjectService {
 
   static async updateProject(id, data) {
     await ProjectModel.update(id, data);
-    return { id, ...data };
+    const members = await MemberModel.findByProject(id);
+    for (const member of members) {
+      await NotificationService.createNotification(
+        member.user_id,
+        "ProjectUpdated",
+        `Project "${data.name}" has been updated.`
+      );
+      return { id, ...data };
+    }
   }
-
   static async deleteProject(id) {
+    const members = await MemberModel.findByProject(projectId);
     await ProjectModel.delete(id);
+    for (const member of members) {
+      await NotificationService.createNotification(
+        member.user_id,
+        "ProjectDeleted",
+        `Project "${project.name}" has been deleted.`
+      );
+    }
     return { message: "Project deleted successfully" };
   }
 }

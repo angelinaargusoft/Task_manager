@@ -49,7 +49,7 @@ class UserModel {
     console.log(values)
     const sql = `UPDATE Users
                SET ${fields.join(", ")}, updated_at = CURRENT_TIMESTAMP
-               WHERE id = ?`;
+               WHERE id = ?`
 
     await pool.query(sql, values);
 

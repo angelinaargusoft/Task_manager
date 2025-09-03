@@ -3,7 +3,7 @@ require('dotenv').config({path: `${process.cwd()}/.env`})
 // const authRouter = require('./route/authRoute')
 const taskRoutes = require("./routes/taskRoute")
 const projectRoutes = require("./routes/projectRoute")
-// const notificationRoutes = require("./route/notificationRoute")
+const notificationRoutes = require("./routes/notificationRoute")
 const userRoutes = require("./routes/userRoute")
 const memberRoutes = require("./routes/memberRoute")
 const authRoutes = require('./routes/authRoute')
@@ -16,7 +16,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/projects', projectRoutes);
-// app.use('/api/notifications', notificationRoutes);
+app.use('/api/notifications', notificationRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/members', memberRoutes)
 

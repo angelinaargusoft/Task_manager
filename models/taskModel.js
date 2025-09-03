@@ -1,6 +1,12 @@
 const db = require("../db/db");
 class TaskModel {
   static async create(task) {
+    const formatDate = (date) => {
+      if (!date) return null;
+      return new Date(date).toISOString().slice(0, 10);
+    };
+
+    task.due_date = formatDate(task.due_date);
     const [result] = await db.execute(
       `INSERT INTO Tasks
         (id, project_id, title, description, status, created_by, assigned_by, assigned_to, due_date)
@@ -11,13 +17,14 @@ class TaskModel {
         task.title,
         task.description,
         task.status,
-        task.created_by,
+        task.createdBy,
         task.assigned_by,
         task.assigned_to,
         task.due_date
       ]
     );
-    return result;
+    
+    return task;
   }
   static async findAll() {
     const [rows] = await db.execute(`SELECT * FROM Tasks`);
