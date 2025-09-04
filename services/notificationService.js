@@ -3,14 +3,15 @@ const { v4: uuidv4 } = require("uuid");
 
 class NotificationService {
   static async createNotification(userId, type, message) {
-    const notification = {
+    const notification = await Notification.create({
       id: uuidv4(),
       user_id: userId,
       type,
       message,
       is_read: false,
-    };
-    return await Notification.create(notification);
+    });
+
+    return notification;
   }
 
   static async getUserNotifications(userId) {
