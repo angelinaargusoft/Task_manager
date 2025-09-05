@@ -4,7 +4,9 @@ exports.createNotification = async (req, res, next) => {
   try {
     const io = req.app.get("io");
     const { userId, type, message } = req.body;
+
     const notification = await NotificationService.createNotification( userId, type, message);
+    
     io.to(userId).emit("notification", notification)
     res.status(201).json(notification);
   } catch (err) {

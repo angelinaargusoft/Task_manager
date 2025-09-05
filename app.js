@@ -14,12 +14,14 @@ const authRoutes = require('./routes/authRoute')
 
 const app = express();
 const server = http.createServer(app);
+
 const io = socketIo(server, {
   cors: {
     origin: "*", 
     methods: ["GET", "POST", "PUT", "DELETE"]
   }
 });
+
 // Store io in app locals so controllers/services can access it
 app.set("io", io);
 
@@ -51,6 +53,6 @@ app.get('/', (req,res)=>{
     })
 })
 
-server.listen(process.env.APP_PORT, ()=>{
+server.listen(process.env.APP_PORT || 3000, ()=>{
     console.log('Server running on port 3000');
 })
