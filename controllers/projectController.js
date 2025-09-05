@@ -35,6 +35,7 @@ exports.updateProject = async (req, res) => {
 
     const project = await ProjectService.getProjectById(id);
     if (!project) return res.status(404).json({ error: "Project not found" });
+
     if (project.createdBy !== req.user.id) {
       return res.status(403).json({ error: "Not authorized to update this project" });
     }
@@ -51,10 +52,12 @@ exports.deleteProject = async (req, res) => {
   try {
     const { id } = req.params;
     const project = await ProjectService.getProjectById(id);
+
     if (!project) return res.status(404).json({ error: "Project not found" });
     if (project.createdBy !== req.user.id) {
       return res.status(403).json({ error: "Not authorized to delete this project" });
     }
+    
     const result = await ProjectService.deleteProject(id);
     res.json(result);
   } catch (err) {

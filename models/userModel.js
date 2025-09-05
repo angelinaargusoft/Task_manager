@@ -45,6 +45,7 @@ class UserModel {
     if (fields.length === 0) {
       throw new Error("No valid fields to update");
     }
+    
     values.push(id);
     console.log(values)
     const sql = `UPDATE Users

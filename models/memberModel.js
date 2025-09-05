@@ -48,4 +48,5 @@ class MemberModel {
     await pool.execute("DELETE FROM Members WHERE id = ?", [id]);
   }
 }
+
 module.exports = MemberModel;

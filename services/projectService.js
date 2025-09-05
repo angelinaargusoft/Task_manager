@@ -45,6 +45,7 @@ class ProjectService {
       return { id, ...data };
     }
   }
+  
   static async deleteProject(id) {
     const members = await MemberModel.findByProject(projectId);
     await ProjectModel.delete(id);
@@ -55,6 +56,7 @@ class ProjectService {
         `Project "${project.name}" has been deleted.`
       );
     }
+
     return { message: "Project deleted successfully" };
   }
 }

@@ -44,4 +44,5 @@ class UserService {
     return await UserModel.delete(id);
   }
 }
+
 module.exports = UserService;

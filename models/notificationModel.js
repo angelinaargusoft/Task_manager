@@ -31,4 +31,5 @@ class Notification {
     return { id, deleted: true };
   }
 }
+
 module.exports = Notification;

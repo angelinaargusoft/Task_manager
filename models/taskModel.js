@@ -55,6 +55,7 @@ class TaskModel {
     return rows;
   }
 }
+
 module.exports = TaskModel;
 
 

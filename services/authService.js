@@ -12,8 +12,10 @@ class AuthService {
     if (existing) {
       throw new Error("Email already in use");
     }
+
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
+
     // Create user
     return await UserModel.createUser({
       first_name,
@@ -28,6 +30,7 @@ class AuthService {
     if (!user) throw new Error("Invalid email or password");
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) throw new Error("Invalid email or password");
+    
     // Sign JWT
     const token = jwt.sign(
       { id: user.id, email: user.email },

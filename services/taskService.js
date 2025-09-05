@@ -8,81 +8,58 @@ class TaskService {
       id: uuidv4(),
       ...data
     };
-
-    // Save task
     const createdTask = await TaskModel.create(task);
 
-    // Get all members of this project
-    const members = await Member.findByProject(task.project_id);
-    if (members && members.length > 0) {
-      for (const member of members) {
-        if (member.id === task.assigned_to) {
-          // Notify assigned user
-          await NotificationService.createNotification(
-            member.user_id,
-            "TaskAssigned",
-            `You have been assigned a new task: ${task.title}`
-          );
-        } else {
-          // Notify other members
-          await NotificationService.createNotification(
-            member.user_id,
-            "TaskCreated",
-            `A new task "${task.title}" was created in your project.`
-          );
-        }
-      }
+    // Get assigned user
+    const member = await Member.findById(task.assigned_to);
+
+    if (member) {
+      // Direct notification to the assigned user
+      await NotificationService.createNotification(
+        member.user_id,
+        "TaskAssigned",
+        `You have been assigned a new task: ${task.title}`
+      );
+      await NotificationService.broadcastToProject(
+      task.project_id,
+      "TaskCreated",
+      `Task "${task.title}" created in project ${task.project_id}`
+    );
     }
+    
     return createdTask;
   }
-
   static async updateTask(id, data) {
     await TaskModel.update(id, data);
-
-    // Get task after update
     const updatedTask = await TaskModel.findById(id);
-
-    // Get all project members
-    const members = await Member.findByProject(updatedTask.project_id);
-    if (members && members.length > 0) {
-      for (const member of members) {
-        if (member.id === data.assigned_to) {
-          // Notify assigned user
-          await NotificationService.createNotification(
-            member.user_id,
-            "TaskUpdatedAssigned",
-            `Your assigned task "${updatedTask.title}" has been updated.`
-          );
-        } else {
-          // Notify others
-          await NotificationService.createNotification(
-            member.user_id,
-            "TaskUpdated",
-            `Task "${updatedTask.title}" has been updated in your project.`
-          );
-        }
-      }
+    const member = await Member.findById(data.assigned_to);
+    if (member) {
+      await NotificationService.createNotification(
+        member.user_id,
+        "TaskUpdated",
+        `Your assigned task "${updatedTask.title}" has been updated.`
+      );
     }
+     await NotificationService.broadcastToProject(
+      data.project_id,
+      "TaskUpdated",
+      `Task "${data.title}" updated in project ${data.project_id}`
+    );
     return updatedTask;
   }
-  
+
   static async deleteTask(id) {
     const task = await TaskModel.findById(id);
     await TaskModel.delete(id);
-    // Notify all members that task was deleted
-    const members = await Member.findByProject(task.project_id);
-    if (members && members.length > 0) {
-      for (const member of members) {
-        await NotificationService.createNotification(
-          member.user_id,
-          "TaskDeleted",
-          `Task "${task.title}" has been deleted.`
-        );
-      }
-    }
+    await NotificationService.broadcastToProject(
+      task.project_id,
+      "TaskDeleted",
+      `Task "${task.title}" deleted from project ${task.project_id}`
+    );
     return { message: "Task deleted successfully" };
   }
 }
+
 module.exports = TaskService;
 
 

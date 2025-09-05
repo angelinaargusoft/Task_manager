@@ -6,5 +6,5 @@ const pool = mysql.createPool({
   password: process.env.DB_PASS || "",
   database: process.env.DB_NAME || "task_manager",
 }).promise()
-//console.log("works");
+
 module.exports = pool;

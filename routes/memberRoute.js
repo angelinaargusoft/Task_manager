@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const memberController = require("../controllers/memberController");
+const { authenticate } = require("../middlewares/authMiddleware");
 
 router.post("/", memberController.addMember);                        // Add member
 router.get("/project/:projectId", memberController.getProjectMembers); // List members of project
