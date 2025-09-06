@@ -10,7 +10,7 @@ class MemberModel {
     return member;
   }
 
-    static async findById(id) {
+  static async findById(id) {
     const [rows] = await pool.execute(
       `SELECT * FROM Members WHERE id = ?`,
       [id]
@@ -43,9 +43,17 @@ class MemberModel {
   static async updateRole(id, role) {
     await pool.execute("UPDATE Members SET role = ? WHERE id = ?", [role, id]);
   }
-  
+
   static async remove(id) {
     await pool.execute("DELETE FROM Members WHERE id = ?", [id]);
+  }
+
+  static async findByUserAndProject(user_id, project_id) {
+    const [rows] = await pool.execute(
+      `SELECT * FROM Members WHERE user_id = ? AND project_id = ? LIMIT 1`,
+      [user_id, project_id]
+    );
+    return rows[0]; // Returns single member object or undefined
   }
 }
 

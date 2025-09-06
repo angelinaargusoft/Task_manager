@@ -11,10 +11,10 @@ async function runMigrations() {
       console.log(`Running migration: ${file}`);
       await pool.query(sql);
     }
-    console.log(":white_check_mark: All migrations applied");
+    console.log("All migrations applied");
     process.exit(0);
   } catch (err) {
-    console.error(":x: Migration failed:", err);
+    console.error("Migration failed:", err);
     process.exit(1);
   }
 }

@@ -67,6 +67,10 @@ class MemberService {
 
     return { message: "Member removed successfully" };
   }
+
+   static async findByUserAndProject(userId, projectId) {
+    return await MemberModel.findByUserAndProject(userId, projectId);
+  }
 }
 module.exports = MemberService;
 

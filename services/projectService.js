@@ -6,15 +6,16 @@ class ProjectService {
   static async createProject(data) {
     //Create the project
     const project = { id: uuidv4(), ...data };
-    await ProjectModel.create(project);
 
+    await ProjectModel.create(project);
     //Add the creator as a member with role "Admin"
     const member = {
       id: uuidv4(),
       project_id: project.id,
-      user_id: data.createdBy,
+      user_id: project.createdBy,
       role: "Admin",
     };
+ 
     await MemberModel.add(member);
 
     await NotificationService.createNotification(
@@ -47,7 +48,9 @@ class ProjectService {
   }
   
   static async deleteProject(id) {
-    const members = await MemberModel.findByProject(projectId);
+    const members = await MemberModel.findByProject(id);
+    const project = await ProjectModel.findById(id);
+
     await ProjectModel.delete(id);
     for (const member of members) {
       await NotificationService.createNotification(

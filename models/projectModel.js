@@ -7,10 +7,7 @@ class ProjectModel {
       "INSERT INTO Projects (id, name, description, createdBy) VALUES (?, ?, ?, ?)",
       [id, name, description, createdBy]
     );
-    await pool.execute(
-      "INSERT INTO Members (id, name, description, createdBy) VALUES (?, ?, ?, ?)",
-      [id, name, description, createdBy]
-    );
+    
     return project;
   }
 

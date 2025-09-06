@@ -2,8 +2,9 @@ const express = require("express");
 const TaskController = require("../controllers/taskController");
 const router = express.Router();
 const { authenticate } = require("../middlewares/authMiddleware");
+const {checkAdmin} = require("../middlewares/checkAdmin");
 
-router.post("/", authenticate, TaskController.createTask);
+router.post("/", authenticate, checkAdmin, TaskController.createTask);
 router.get("/", authenticate, TaskController.getAllTasks);
 router.get("/:id", authenticate, TaskController.getTaskById);
 router.put("/:id", authenticate, TaskController.updateTask);
